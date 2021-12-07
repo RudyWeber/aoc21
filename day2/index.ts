@@ -23,6 +23,18 @@ const calculatePosition = (xs: [cmd: command, n:number][]): {horizontal: number,
     }
   }, { horizontal: 0, depth: 0 });
 
+const calculatePositionWithAim = (xs: [cmd: command, n:number][]): {horizontal: number, depth: number, aim: number} =>
+  xs.reduce<{horizontal: number, depth: number, aim: number }>(({ horizontal, depth, aim }, [cmd, n]) => {
+    switch (cmd) {
+      case 'forward':
+        return { horizontal: horizontal + n, depth: depth + aim * n, aim };
+      case 'down':
+        return { horizontal, depth, aim: aim + n };
+      case 'up':
+        return { horizontal, depth, aim: aim - n };
+    }
+  }, { horizontal: 0, depth: 0, aim: 0 });
+
 const calculateScore = ({ horizontal, depth }: { horizontal: number, depth: number }): number => horizontal * depth;
 
 const solve1: (input: string) => number = 
@@ -32,6 +44,15 @@ const solve1: (input: string) => number =
     calculateScore
   );
 
+const solve2: (input: string) => number =
+  pipe(
+    parseInput,
+    calculatePositionWithAim,
+    calculateScore,
+  );
+
 const result1 = solve1(input);
+const result2 = solve2(input);
 
 console.log(result1);
+console.log(result2);
